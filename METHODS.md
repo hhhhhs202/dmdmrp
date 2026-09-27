@@ -11,6 +11,7 @@ Raw data (11,939타점)
    ▼
 [2단계] stage2_supervised.py     지도: 타입 라벨 생성 → 선별 기준 학습 → 후보 최종 판정
        → output/stage2/final_defects.csv       (불량으로 확정된 것만 66행, 후보였지만 정상인 것은 제외)
+       → output/stage2/final_defects_matched.csv (검사 개수에 맞춘 버전 45행)
        → output/stage2/selection_rules.txt      (학습된 선별 기준)
 ```
 
@@ -196,6 +197,11 @@ OOF 성능(RandomForest, τ = 0.70):
 주요 컬럼: `defect type` / `defect name`(최종), `P_defect`, `P_T1~T3`(확률), `tree_rule_type`(규칙 기반 판정), `weak_label`(학습 라벨), `inspected_day`(03-27은 N).
 
 ---
+
+### C-5. 검사 개수 맞춤 버전 (`final_defects_matched.csv`)
+검사일마다 result 시트의 타입별 개수(k₁, k₂, k₃)만큼 슬롯을 만듦. 그다음 비용 = −P(타입)인 행렬에서 헝가리안 할당으로 확률이 가장 높은 후보를 1:1로 배정함.
+동점(값이 똑같은 복사 타점)은 1단계 anomaly_score, 그다음 시간 순으로 정함. 03-27은 확률 기준 판정을 그대로 씀.
+결과: 검사일 39개(result 시트와 완전히 일치) + 03-27 6개 = 45행.
 
 ## D. 한계와 해석 시 주의점
 1. **정답 라벨이 없음**: 학습 라벨은 물리 가설 + 일별 개수로 만든 추정치임. 모델은 "이 가설을 일관되게 일반화한 결과"이지 검사 정답이 아님. 타점 idx가 붙은 검사 기록이 생기면 C-1을 그 라벨로 바꾸기만 하면 됨.

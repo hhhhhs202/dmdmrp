@@ -13,6 +13,7 @@ STAGE 2 - supervised defect-type classification on the stage-1 candidates
 
 Output (output/stage2/)
   final_defects.csv       final defects only (candidate-but-normal rows are dropped)
+  final_defects_matched.csv  same, but on inspected days exactly the recorded count per type
   training_labels.csv     weak labels used for training (candidates of labelled days)
   selection_rules.txt     decision-tree rules + feature importance
   stage2_log.txt, fig_s2_*.png
@@ -175,6 +176,44 @@ say("\n== final defects vs result sheet ==\n" + cmp.to_string())
 say("final defects:", len(final), "| candidates dropped as normal:", int((cand.pred_type == 0).sum()))
 say("agreement with weak label on labelled days: %.3f" %
     (cand.loc[cand.y.notna(), "pred_type"] == cand.loc[cand.y.notna(), "y"]).mean())
+
+# ------------------------------------------------------------------ 3b. count-matched version
+# Inspected days: keep exactly the recorded number per type, choosing the candidates with the highest
+# model probability for that type (assignment problem, one weld per slot).  Identical welds have identical
+# probabilities, so ties are broken by the stage-1 anomaly score (drift-segment welds count as 1.0),
+# then by time order.  The un-inspected day keeps the threshold decision.
+tie = cand["anomaly_score"].fillna(1.0).values * 1e-3 - cand["seq"].values * 1e-9
+cand["matched_type"] = 0
+for d, g in cand.groupby("date"):
+    if d == UNLABELED_DAY or d not in counts.index:
+        cand.loc[g.index, "matched_type"] = cand.loc[g.index, "pred_type"]
+        continue
+    slots = [t for t in (1, 2, 3) for _ in range(int(counts.loc[d].get(t, 0)))]
+    if not slots:
+        continue
+    pos = cand.index.get_indexer(g.index)
+    cost = -np.column_stack([P[pos, t] + tie[pos] for t in slots])
+    r_i, c_i = linear_sum_assignment(cost)
+    cand.loc[g.index[r_i], "matched_type"] = [slots[c] for c in c_i]
+
+matched = cand[cand.matched_type > 0].copy()
+matched["defect type"] = matched.matched_type.astype(int)
+matched["defect name"] = matched["defect type"].map(TYPE_NAME)
+matched["weak_label"] = matched.y.map(lambda v: "" if pd.isna(v) else TYPE_NAME[int(v)])
+matched["inspected_day"] = np.where(matched.date == UNLABELED_DAY, "N (예측만)", "Y")
+matched["selection"] = np.where(matched.date == UNLABELED_DAY, "모델 판정(P_defect>=%.2f)" % TAU,
+                                "검사 개수 맞춤(해당 타입 확률 상위)")
+matched["threshold_type"] = matched.pred_type.astype(int)      # what the plain threshold rule said
+matched = matched.round({"F": 2, "I": 2, "V": 3, "T": 2, "R": 5, "Q": 2})
+matched = matched[out_cols + ["threshold_type", "selection"]].rename(
+    columns={"F": "weld force(bar)", "I": "weld current(kA)", "V": "weld Voltage(v)", "T": "weld time(ms)",
+             "R": "R_dyn(mOhm)", "Q": "Q_heat(J)"})
+matched.to_csv(S2 / "final_defects_matched.csv", index=False, encoding="utf-8-sig")
+mc = matched.groupby(["date", "defect type"]).size().unstack(fill_value=0).reindex(columns=[1, 2, 3], fill_value=0)
+say("\n== count-matched final defects (final_defects_matched.csv) ==\n" + mc.to_string())
+say("rows:", len(matched), "| inspected days:", int((matched.inspected_day == "Y").sum()),
+    "| agree with weak label: %d" % (matched["weak_label"] == matched["defect name"]).sum(),
+    "| same as threshold decision: %d" % (matched["threshold_type"] == matched["defect type"]).sum())
 
 # ------------------------------------------------------------------ figures
 plt.rcParams.update({"figure.dpi": 110, "axes.spines.top": False, "axes.spines.right": False})

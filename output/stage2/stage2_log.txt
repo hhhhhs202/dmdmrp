@@ -119,3 +119,17 @@ date
 20200407        0        0        5          0          1          2            13
 final defects: 66 | candidates dropped as normal: 1606
 agreement with weak label on labelled days: 0.972
+
+== count-matched final defects (final_defects_matched.csv) ==
+defect type  1  2  3
+date                
+20200324     2  1  1
+20200325     3  2  3
+20200326     3  2  2
+20200327     3  2  1
+20200330     1  2  1
+20200331     2  3  0
+20200402     1  1  2
+20200403     2  1  1
+20200407     0  1  2
+rows: 45 | inspected days: 39 | agree with weak label: 29 | same as threshold decision: 41

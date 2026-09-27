@@ -1,5 +1,7 @@
 # 스폿용접 Defect 라벨 구성 및 분석 보고서
 
+> 후속 작업: 비지도(1단계) → 지도(2단계) 불량 선별 파이프라인과 그 물리/계산 방법은 [METHODS.md](METHODS.md) 참고.
+
 - 대상: `Welding_Data_Set_01.xlsx` (Spot-01, 품번 65235-25800, 2020-03-24 ~ 04-07, 11,939타점), `scaled_data.csv`
 - 재현: `pip install pandas scikit-learn matplotlib openpyxl scipy` → `python analysis/build_defect.py`
 - 산출물: `output/Defect.csv`(필수 과제), `output/fig*.png`, `output/metrics.txt`(본문 수치의 원출처)

@@ -1,0 +1,121 @@
+candidates: (1672, 36) | by source: {'drift_segment': 1270, 'point_anomaly': 284, 'day_relative': 118}
+weak labels (labelled days): {0: 1250, 1: 14, 2: 13, 3: 12}
+
+threshold search (RF, out-of-fold):
+ tau  macroF1  n_pred_defect
+0.20    0.480             88
+0.25    0.491             83
+0.30    0.480             81
+0.35    0.485             79
+0.40    0.478             74
+0.45    0.479             73
+0.50    0.484             71
+0.55    0.489             69
+0.60    0.505             62
+0.65    0.480             51
+0.70    0.487             45
+0.75    0.472             40
+0.80    0.459             38
+0.85    0.476             27
+0.90    0.393             11
+chosen tau = 0.7 | true defects in training: 39
+
+== leave-one-day-out: rf ==
+                   precision    recall  f1-score   support
+
+           normal       0.98      0.98      0.98      1250
+          T1 dent       0.48      0.71      0.57        14
+T2 lack of fusion       0.31      0.31      0.31        13
+         T3 crack       0.09      0.08      0.09        12
+
+         accuracy                           0.96      1289
+        macro avg       0.46      0.52      0.49      1289
+     weighted avg       0.96      0.96      0.96      1289
+
+confusion (rows=true, cols=pred):
+                   normal  T1 dent  T2 lack of fusion  T3 crack
+normal               1224        8                  9         9
+T1 dent                 3       10                  0         1
+T2 lack of fusion       9        0                  4         0
+T3 crack                8        3                  0         1
+
+== leave-one-day-out: tree ==
+                   precision    recall  f1-score   support
+
+           normal       0.99      0.82      0.90      1250
+          T1 dent       0.08      0.79      0.14        14
+T2 lack of fusion       0.19      0.69      0.30        13
+         T3 crack       0.08      0.42      0.13        12
+
+         accuracy                           0.82      1289
+        macro avg       0.33      0.68      0.37      1289
+     weighted avg       0.97      0.82      0.88      1289
+
+confusion (rows=true, cols=pred):
+                   normal  T1 dent  T2 lack of fusion  T3 crack
+normal               1026      127                 39        58
+T1 dent                 2       11                  0         1
+T2 lack of fusion       3        0                  9         1
+T3 crack                3        4                  0         5
+
+RF feature importance:
+Q          0.159
+q_per_F    0.118
+d_Q        0.115
+F          0.105
+R          0.089
+V          0.087
+I          0.087
+T          0.065
+d_F        0.063
+d_V        0.032
+step_F     0.030
+step_I     0.019
+d_I        0.016
+step_V     0.013
+
+decision-tree rules:
+|--- Q <= 2781.7000
+|   |--- d_Q <= -26.8000
+|   |   |--- R <= 0.1857
+|   |   |   |--- d_V <= -0.0065
+|   |   |   |   |--- class: normal
+|   |   |   |--- d_V >  -0.0065
+|   |   |   |   |--- class: T2 lack of fusion
+|   |   |--- R >  0.1857
+|   |   |   |--- class: normal
+|   |--- d_Q >  -26.8000
+|   |   |--- class: normal
+|--- Q >  2781.7000
+|   |--- F <= 2.3550
+|   |   |--- R <= 0.1807
+|   |   |   |--- class: normal
+|   |   |--- R >  0.1807
+|   |   |   |--- d_V <= 0.0035
+|   |   |   |   |--- class: T3 crack
+|   |   |   |--- d_V >  0.0035
+|   |   |   |   |--- class: T3 crack
+|   |--- F >  2.3550
+|   |   |--- I <= 14.7550
+|   |   |   |--- V <= 2.7515
+|   |   |   |   |--- class: T1 dent
+|   |   |   |--- V >  2.7515
+|   |   |   |   |--- class: normal
+|   |   |--- I >  14.7550
+|   |   |   |--- class: normal
+
+
+== final defects vs result sheet ==
+            pred_T1  pred_T2  pred_T3  result_T1  result_T2  result_T3  n_candidates
+date                                                                                
+2020-03-24        2        2        3          2          1          1            40
+2020-03-25        3        2        1          3          2          3           383
+2020-03-26        4        2        2          3          2          2            20
+2020-03-27        3        2        1          0          0          0           383
+2020-03-30        4        4        2          1          2          1            28
+2020-03-31        3        2        1          2          3          0           383
+2020-04-02        4        4        4          1          1          2            39
+2020-04-03        3        2        1          2          1          1           383
+2020-04-07        0        0        5          0          1          2            13
+final defects: 66 | candidates dropped as normal: 1606
+agreement with weak label on labelled days: 0.972

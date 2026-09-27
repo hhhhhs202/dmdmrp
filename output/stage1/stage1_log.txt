@@ -1,0 +1,37 @@
+== preprocessing == {'spec_violations': 0, 'dup_date_idx': 1} | rows kept: 11938
+
+== (a) drift segments ==
+    segment_id       date  idx_start  idx_end  n_welds  F_max  F_median  V_min  V_max  Q_min  Q_max   R_min
+2020-03-24_S01 2020-03-24        741      754       14   2.18      2.17  2.698  2.705 2825.8 2909.0 0.18217
+2020-03-25_S02 2020-03-25        662      975      314  10.54      7.18  2.464  2.861 2580.4 3105.5 0.16615
+2020-03-27_S03 2020-03-27       1126     1439      314  10.54      7.18  2.464  2.861 2580.4 3105.5 0.16615
+2020-03-31_S04 2020-03-31       1116     1429      314  10.54      7.18  2.464  2.861 2580.4 3105.5 0.16615
+2020-04-03_S05 2020-04-03        392      705      314  10.54      7.18  2.464  2.861 2580.4 3105.5 0.16615
+
+== stable regime ==  rows: 10668
+detector hits (stable regime): {'D1_window': 264, 'D2_mahal': 602, 'D3_iforest': 214}
+point candidates (>=2 votes): 284 | day-relative: 118 | segment welds: 1270 | total candidates: 1672 (14.0%)
+            welds  seg  point  dayrel  cand  result_defects
+date                                                       
+2020-03-24   1200   14      8      18    40             4.0
+2020-03-25   1351  314     69       0   383             8.0
+2020-03-26   1000    0      0      20    20             7.0
+2020-03-27   1648  314     69       0   383             NaN
+2020-03-30   1470    0      0      28    28             4.0
+2020-03-31   1800  314     69       0   383             5.0
+2020-04-02   2000    0      0      39    39             4.0
+2020-04-03    800  314     69       0   383             4.0
+2020-04-07    669    0      0      13    13             3.0
+days with fewer candidates than recorded defects: []
+
+== (b) safe process window ==
+variable unit     median  robust_sigma  rule_low(med-3.5s)  rule_high(med+3.5s)  observed_safe_min  observed_safe_max       p0.5      p99.5
+       F  bar    2.33000       0.04448             2.17433              2.48567            2.18000            2.48000    2.26000    2.47000
+       I   kA   14.72000       0.05930            14.51244             14.92756           14.52000           14.94000   14.54000   14.88675
+       V    V    2.70200       0.00445             2.68643              2.71757            2.68900            2.71700    2.69100    2.71400
+       T   ms   72.00000       0.74129            69.40549             74.59451           70.00000           73.00000   70.00000   73.00000
+       R mOhm    0.18359       0.00097             0.18019              0.18700            0.18038            0.18665    0.18155    0.18643
+       Q    J 2846.80080      30.00302          2741.79021           2951.81139         2750.96850         2947.06256 2780.35800 2917.09022
+joint condition: robust Mahalanobis d^2 on (F,I,V,T) <= 18.47 (chi2 0.999, df=4)
+
+written: /home/user/dmdmrp/output/stage1/defect_candidates.csv (1672, 36)

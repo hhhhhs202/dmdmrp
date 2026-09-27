@@ -1,0 +1,115 @@
+== 1. raw data ==
+rows 11939 | constant cols: ['Machine_Name', 'Item No', 't1', 't2']
+rows per day: {Timestamp('2020-03-24 00:00:00'): 1200, Timestamp('2020-03-25 00:00:00'): 1352, Timestamp('2020-03-26 00:00:00'): 1000, Timestamp('2020-03-27 00:00:00'): 1648, Timestamp('2020-03-30 00:00:00'): 1470, Timestamp('2020-03-31 00:00:00'): 1800, Timestamp('2020-04-02 00:00:00'): 2000, Timestamp('2020-04-03 00:00:00'): 800, Timestamp('2020-04-07 00:00:00'): 669}
+
+== 2. result sheet (daily defect counts) ==
+defect type     1    2    3
+working time               
+2020-03-24    2.0  1.0  1.0
+2020-03-25    3.0  2.0  3.0
+2020-03-26    3.0  2.0  2.0
+2020-03-27    NaN  NaN  NaN
+2020-03-30    1.0  2.0  1.0
+2020-03-31    2.0  3.0  NaN
+2020-04-02    1.0  1.0  2.0
+2020-04-03    2.0  1.0  1.0
+2020-04-07    0.0  1.0  2.0
+total per type: {1: 14, 2: 13, 3: 12} | total 39
+
+== 3. preprocessing ==
+out-of-spec rows (data set sheet ranges): 0 | NaN: 0
+duplicated (date, idx): 2
+  idx jump on 2020-03-25: [(1350, 1), (1, 1650)]
+non-integer weld time rows: 297 [np.float64(72.16), np.float64(72.18), np.float64(72.2), np.float64(72.24)]
+force-block rows by day: {'2020-03-24': 0, '2020-03-25': 287, '2020-03-26': 0, '2020-03-27': 287, '2020-03-30': 0, '2020-03-31': 287, '2020-04-02': 0, '2020-04-03': 287, '2020-04-07': 0}
+
+== 4. date effect ==
+               n  F_mean  F_med   I_med     Q_med  block  defects  rate_%
+date                                                                     
+2020-03-24  1200   2.330  2.330  14.720  2844.515      0      4.0   0.333
+2020-03-25  1352   3.332  2.350  14.740  2864.573    287      8.0   0.592
+2020-03-26  1000   2.351  2.350  14.620  2839.258      0      7.0   0.700
+2020-03-27  1648   3.146  2.320  14.750  2865.633    287      NaN     NaN
+2020-03-30  1470   2.347  2.350  14.700  2841.698      0      4.0   0.272
+2020-03-31  1800   3.078  2.320  14.740  2864.646    287      5.0   0.278
+2020-04-02  2000   2.331  2.330  14.730  2850.251      0      4.0   0.200
+2020-04-03   800   4.030  2.425  14.785  2871.288    287      4.0   0.500
+2020-04-07   669   2.349  2.350  14.610  2835.555      0      3.0   0.448
+corr(defects, n) = 0.09 | corr(defects, has_block) = 0.38 | corr(rate, has_block) = 0.20
+3-gram overlap between days (1.0 = one day is contained in the other):
+            2020-03-24  2020-03-25  2020-03-26  2020-03-27  2020-03-30  2020-03-31  2020-04-02  2020-04-03  2020-04-07
+2020-03-24        1.00        0.31        0.99        0.56        0.99        0.68        0.79        0.12        0.97
+2020-03-25        0.31        1.00        0.76        0.88        0.68        1.00        0.52        1.00        0.97
+2020-03-26        0.99        0.76        1.00        0.42        1.00        0.75        1.00        0.19        0.97
+2020-03-27        0.56        0.88        0.42        1.00        0.47        0.99        0.76        1.00        0.42
+2020-03-30        0.99        0.68        1.00        0.47        1.00        0.75        1.00        0.17        0.97
+2020-03-31        0.68        1.00        0.75        0.99        0.75        1.00        0.89        1.00        0.97
+2020-04-02        0.79        0.52        1.00        0.76        1.00        0.89        1.00        0.12        0.97
+2020-04-03        0.12        1.00        0.19        1.00        0.17        1.00        0.12        1.00        0.00
+2020-04-07        0.97        0.97        0.97        0.42        0.97        0.97        0.97        0.00        1.00
+
+== 5. defect labeling ==
+label_phys {-1: 1648, 0: 10252, 1: 14, 2: 13, 3: 12}
+label_raw4 {-1: 1648, 0: 10252, 1: 14, 2: 13, 3: 12}
+label_rand {-1: 1648, 0: 10252, 1: 14, 2: 13, 3: 12}
+Defect.csv written: (11939, 19)
+re-aggregated from Defect.csv:
+defect type   1  2  3
+working time         
+2020-03-24    2  1  1
+2020-03-25    3  2  3
+2020-03-26    3  2  2
+2020-03-30    1  2  1
+2020-03-31    2  3  0
+2020-04-02    1  1  2
+2020-04-03    2  1  1
+2020-04-07    0  1  2
+
+profile of labeled rows (median):
+                F      I      V     T      R         Q  force_block
+label_phys                                                         
+0           2.340  14.73  2.702  72.0  0.184  2849.952          0.0
+1           5.655  14.66  2.730  72.5  0.186  2899.316          0.5
+2           2.370  14.59  2.698  70.0  0.185  2749.802          0.0
+3           2.260  14.74  2.702  73.0  0.183  2907.222          0.0
+
+== 7. PCA & separability ==
+linear R^2 of Q from ['V', 'I', 'T']: 0.9999
+linear R^2 of R from ['V', 'I']: 1.0000
+raw4 (F,I,V,T) explained var (stable regime): [0.305 0.259 0.245 0.191]
+   PC1: {'F': np.float64(0.72), 'I': np.float64(-0.31), 'V': np.float64(0.59), 'T': np.float64(0.19)} | PC2: {'F': np.float64(0.0), 'I': np.float64(0.69), 'V': np.float64(0.52), 'T': np.float64(-0.5)}
+raw4 + R,Q explained var (stable regime): [0.383 0.295 0.177 0.145]
+   PC1: {'F': np.float64(-0.12), 'I': np.float64(0.58), 'V': np.float64(-0.08), 'T': np.float64(0.28), 'R': np.float64(-0.55), 'Q': np.float64(0.51)} | PC2: {'F': np.float64(0.3), 'I': np.float64(-0.16), 'V': np.float64(0.51), 'T': np.float64(0.51), 'R': np.float64(0.39), 'Q': np.float64(0.47)}
+physics (logF,Q,R) explained var (stable regime): [0.453 0.34  0.207]
+   PC1: {'logF': np.float64(0.37), 'Q': np.float64(-0.59), 'R': np.float64(0.72)} | PC2: {'logF': np.float64(0.84), 'Q': np.float64(0.55), 'R': np.float64(0.02)}
+          features     labels  silhouette_PC12  LODO_LDA_acc
+    raw4 (F,I,V,T) label_rand           -0.193         0.359
+    raw4 (F,I,V,T) label_raw4           -0.039         0.974
+    raw4 (F,I,V,T) label_phys            0.028         1.000
+        raw4 + R,Q label_rand           -0.160         0.282
+        raw4 + R,Q label_raw4            0.258         1.000
+        raw4 + R,Q label_phys            0.192         0.974
+physics (logF,Q,R) label_rand           -0.173         0.385
+physics (logF,Q,R) label_raw4            0.248         0.974
+physics (logF,Q,R) label_phys            0.058         0.846
+(chance accuracy for 3 balanced classes ~0.33)
+
+== 8. scaled_data.csv ==
+shape (11939, 4) | NaN per col {'F': 18, 'I': 15, 'V': 15, 'T': 23}
+share of rows with value < 0.01 (per col): {'F': 0.897, 'I': 0.995, 'V': 0.996, 'T': 0.994}
+F: implied MinMax range = [1.740, 120.00]  (raw range [1.7399999999999998, 10.540000000000001], spec (1, 12))
+I: implied MinMax range = [14.520, 154.38]  (raw range [14.520000000000001, 15.070000000000002], spec (12, 18))
+V: implied MinMax range = [2.678, 12.26]  (raw range [2.464, 2.861], spec (1.5, 3.5))
+T: implied MinMax range = [70.000, 2240.00]  (raw range [70.0, 73.0], spec (30, 120))
+out-of-spec values in scaled_data (after inverse scaling): {'F': 43, 'I': 50, 'V': 27, 'T': 47} | rows: 166
+row-wise corr with raw (clean rows): {'F': np.float64(0.967), 'I': np.float64(0.932), 'V': np.float64(0.893), 'T': np.float64(0.098)}
+examples of spikes:
+         F      I      V     T
+2     2.33  14.57  7.542  72.0
+9     2.33  14.53  7.552  70.0
+16   50.80  14.59  2.702  71.0
+25   57.00  14.58  2.702  71.0
+26    2.38  14.58  8.502  71.0
+33    2.36  55.02  2.703  72.0
+47  120.00  14.60  2.703  72.0
+55  113.00  14.59  2.702  72.0

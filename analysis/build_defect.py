@@ -191,7 +191,7 @@ defect["defect"] = pd.Series(np.where(lab > 0, 1, 0), index=lab.index).where(lab
 defect["defect type"] = lab.where(lab >= 0).astype("Int64")
 defect["defect name"] = lab.map(TYPE_NAME).fillna("미검사(결과없음)")
 defect["force_block"] = raw["force_block"].astype(int)
-defect["working time"] = defect["working time"].dt.date
+defect["working time"] = defect["working time"].dt.strftime("%Y%m%d").astype(int)   # numeric date 20200324
 defect.to_csv(OUT / "Defect.csv", index=False, encoding="utf-8-sig")
 say("Defect.csv written:", defect.shape)
 

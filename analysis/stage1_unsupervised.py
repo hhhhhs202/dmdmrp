@@ -164,17 +164,17 @@ cols = ["uid", "date", "idx", "seq", "F", "I", "V", "T", "R", "Q", "P", "q_per_F
 cand = df.loc[df.candidate, cols].copy()
 for c in ["D1_window", "D2_mahal", "D3_iforest"]:
     cand[c] = cand[c].astype(int)
-cand = cand.round({"R": 5, "Q": 2, "P": 3, "q_per_F": 2, "d_F": 3, "d_I": 3, "d_V": 4, "d_R": 5, "d_Q": 2,
+cand = cand.round({"F": 2, "I": 2, "V": 3, "T": 2, "R": 5, "Q": 2, "P": 3, "q_per_F": 2, "d_F": 3, "d_I": 3, "d_V": 4, "d_R": 5, "d_Q": 2,
                    "step_F": 3, "step_I": 3, "step_V": 4, "mahal_d2": 3, "iforest_score": 4,
                    "day_rank_pct": 4})
 cand.to_csv(S1 / "defect_candidates.csv", index=False, encoding="utf-8-sig")
-segs.to_csv(S1 / "defect_segments.csv", index=False, encoding="utf-8-sig")
+segs.round({"F_max": 2, "F_median": 2, "V_min": 3, "V_max": 3}).to_csv(S1 / "defect_segments.csv", index=False, encoding="utf-8-sig")
 say("\nwritten:", S1 / "defect_candidates.csv", cand.shape)
 
 # ------------------------------------------------------------------ figures
 plt.rcParams.update({"figure.dpi": 110, "axes.spines.top": False, "axes.spines.right": False})
 # 1) one block day timeline
-d = "2020-03-25"
+d = 20200325
 g = df[df.date == d]
 fig, axs = plt.subplots(3, 1, figsize=(12, 7), sharex=True)
 for ax, k, lab in zip(axs, ["F", "V", "Q"], ["force (bar)", "voltage (V)", "heat Q (J)"]):

@@ -75,7 +75,8 @@ for d, g in cand.groupby("date"):
 lab = cand[cand.y.notna()].copy()
 lab["y"] = lab.y.astype(int)
 say("weak labels (labelled days):", lab.y.value_counts().sort_index().to_dict())
-lab[["uid", "date", "idx", "F", "I", "V", "T", "R", "Q", "candidate_source", "y"]].assign(
+lab[["uid", "date", "idx", "F", "I", "V", "T", "R", "Q", "candidate_source", "y"]].round(
+    {"F": 2, "I": 2, "V": 3, "T": 2, "R": 5, "Q": 2}).assign(
     y_name=lab.y.map(TYPE_NAME)).to_csv(S2 / "training_labels.csv", index=False, encoding="utf-8-sig")
 
 # ------------------------------------------------------------------ 2. learn the criteria
@@ -159,6 +160,7 @@ final["inspected_day"] = np.where(final.date == UNLABELED_DAY, "N (예측만)", 
 out_cols = ["uid", "date", "idx", "seq", "F", "I", "V", "T", "R", "Q", "candidate_source", "segment_id",
             "anomaly_score", "defect type", "defect name", "P_defect", "P_normal", "P_T1", "P_T2", "P_T3",
             "tree_rule_type", "weak_label", "inspected_day"]
+final = final.round({"F": 2, "I": 2, "V": 3, "T": 2, "R": 5, "Q": 2})
 final = final[out_cols].rename(columns={"F": "weld force(bar)", "I": "weld current(kA)", "V": "weld Voltage(v)",
                                         "T": "weld time(ms)", "R": "R_dyn(mOhm)", "Q": "Q_heat(J)"})
 final.to_csv(S2 / "final_defects.csv", index=False, encoding="utf-8-sig")

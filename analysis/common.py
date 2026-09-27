@@ -12,7 +12,7 @@ SPEC = {"F": (1.0, 12.0), "I": (12.0, 18.0), "V": (1.5, 3.5), "T": (30.0, 120.0)
 TYPE_NAME = {0: "정상", 1: "파임불량", 2: "용접부족", 3: "크랙발생"}
 TYPE_EN = {0: "normal", 1: "T1 dent", 2: "T2 lack of fusion", 3: "T3 crack"}
 COLORS = {0: "#c8c8c8", 1: "#1f77b4", 2: "#ff7f0e", 3: "#d62728"}
-UNLABELED_DAY = "2020-03-27"          # no inspection record in the result sheet
+UNLABELED_DAY = 20200327            # no inspection record in the result sheet
 ROLL_W = 11                           # window (welds) for local-baseline features
 
 ORIG_COLS = {"F": "weld force(bar)", "I": "weld current(kA)", "V": "weld Voltage(v)", "T": "weld time(ms)"}
@@ -32,10 +32,10 @@ def load_raw():
     xl = pd.read_excel(ROOT / "data/Welding_Data_Set_01.xlsx", sheet_name=None)
     raw = xl["Raw data"].copy()
     raw.columns = ["idx", "Machine_Name", "Item No", "working time", "t1", "t2", "F", "I", "V", "T"]
-    raw["date"] = raw["working time"].dt.date.astype(str)
+    raw["date"] = raw["working time"].dt.strftime("%Y%m%d").astype(int)      # 20200324
     res = xl["result"].iloc[:, :6].copy()
     res.columns = ["idx", "Machine_Name", "Item No", "working time", "defect", "defect type"]
-    res["date"] = res["working time"].dt.date.astype(str)
+    res["date"] = res["working time"].dt.strftime("%Y%m%d").astype(int)
     counts = res.pivot_table(index="date", columns="defect type", values="defect", aggfunc="sum").fillna(0)
     counts = counts.astype(int)
     return raw, counts
@@ -51,7 +51,7 @@ def preprocess(raw):
     dup = df.duplicated(["date", "idx"], keep="first")
     df = df[~dup].copy()
     df["seq"] = df.groupby("date").cumcount()          # position within the day (time order)
-    df["uid"] = df["date"] + "_" + df["idx"].astype(str)
+    df["uid"] = df["date"].astype(str) + "_" + df["idx"].astype(str)
 
     # physical features (resistance spot welding)
     df["R"] = df["V"] / df["I"]                        # dynamic resistance  [V/kA = mOhm]

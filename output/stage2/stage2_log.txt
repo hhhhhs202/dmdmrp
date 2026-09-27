@@ -106,16 +106,16 @@ decision-tree rules:
 
 
 == final defects vs result sheet ==
-            pred_T1  pred_T2  pred_T3  result_T1  result_T2  result_T3  n_candidates
-date                                                                                
-2020-03-24        2        2        3          2          1          1            40
-2020-03-25        3        2        1          3          2          3           383
-2020-03-26        4        2        2          3          2          2            20
-2020-03-27        3        2        1          0          0          0           383
-2020-03-30        4        4        2          1          2          1            28
-2020-03-31        3        2        1          2          3          0           383
-2020-04-02        4        4        4          1          1          2            39
-2020-04-03        3        2        1          2          1          1           383
-2020-04-07        0        0        5          0          1          2            13
+          pred_T1  pred_T2  pred_T3  result_T1  result_T2  result_T3  n_candidates
+date                                                                              
+20200324        2        2        3          2          1          1            40
+20200325        3        2        1          3          2          3           383
+20200326        4        2        2          3          2          2            20
+20200327        3        2        1          0          0          0           383
+20200330        4        4        2          1          2          1            28
+20200331        3        2        1          2          3          0           383
+20200402        4        4        4          1          1          2            39
+20200403        3        2        1          2          1          1           383
+20200407        0        0        5          0          1          2            13
 final defects: 66 | candidates dropped as normal: 1606
 agreement with weak label on labelled days: 0.972

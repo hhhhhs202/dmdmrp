@@ -1,0 +1,30 @@
+raw sheet NaN: 0 | out-of-spec: {'F': 0, 'I': 0, 'V': 0, 'T': 0}
+
+[raw] rows=11939
+  normalized   min/max : {'F': {'min': 0.0, 'max': 1.0}, 'I': {'min': 0.0, 'max': 1.0}, 'V': {'min': 0.0, 'max': 1.0}, 'T': {'min': 0.0, 'max': 1.0}}
+  standardized mean/std: {'F': {'mean': -0.0, 'std': 1.0}, 'I': {'mean': 0.0, 'std': 1.0}, 'V': {'mean': 0.0, 'std': 1.0}, 'T': {'mean': -0.0, 'std': 1.0}}
+
+scaled_data NaN per col: {'F': 18, 'I': 15, 'V': 15, 'T': 23}
+scaled_data share < 0.01 (before cleaning): {'F': 0.897, 'I': 0.995, 'V': 0.996, 'T': 0.994}
+  F: implied original MinMax range [1.740, 120.00]
+  I: implied original MinMax range [14.520, 154.38]
+  V: implied original MinMax range [2.678, 12.26]
+  T: implied original MinMax range [70.000, 2240.00]
+out-of-spec values -> NaN: {'F': 43, 'I': 50, 'V': 27, 'T': 47} | rows: 166
+filled 238 NaN (original NaN + spikes) with previous value
+
+[scaled_data] rows=11939
+  normalized   min/max : {'F': {'min': 0.0, 'max': 1.0}, 'I': {'min': 0.0, 'max': 1.0}, 'V': {'min': 0.0, 'max': 1.0}, 'T': {'min': 0.0, 'max': 1.0}}
+  standardized mean/std: {'F': {'mean': -0.0, 'std': 1.0}, 'I': {'mean': -0.0, 'std': 1.0}, 'V': {'mean': -0.0, 'std': 1.0}, 'T': {'mean': -0.0, 'std': 1.0}}
+scaled_data share < 0.01 (after cleaning + MinMax): {'F': 0.001, 'I': 0.002, 'V': 0.001, 'T': 0.022}
+
+scaler parameters:
+    dataset column    min    max    mean    std
+        raw      F  1.740 10.540  2.7879 1.4559
+        raw      I 14.520 15.070 14.7112 0.0990
+        raw      V  2.464  2.861  2.7042 0.0247
+        raw      T 70.000 73.000 71.7241 0.6320
+scaled_data      F  1.740 10.540  2.7880 1.4559
+scaled_data      I 14.520 15.070 14.7112 0.0990
+scaled_data      V  2.678  2.718  2.7025 0.0025
+scaled_data      T 70.000 73.000 71.7202 0.6294
